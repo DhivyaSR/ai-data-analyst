@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Data Analyst</title>
+  <link rel="stylesheet" href="/static/style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+</head>
+<body>
+  <div class="page-shell">
+    <header class="branding">
+      <div class="branding__mark">AI</div>
+      <div class="branding__text">
+        <h1>AI Data Analyst</h1>
+        <p>Ask questions about your sales data, generate charts, and get accurate results.</p>
+      </div>
+    </header>
+
+    <section class="card chat-area">
+      <div class="chat-panel" id="chat-panel">
+        <div class="message agent">Welcome! Ask anything about your sales dataset to generate SQL-based insights.</div>
+      </div>
+
+      <div class="footer">
+        <div class="meta">
+          <span class="status" id="status-text">Ready to analyze your data</span>
+        </div>
+
+        <div class="input-group">
+          <input id="prompt-input" placeholder="e.g. show sales by region for last quarter" />
+          <button id="ask-button">Ask Analyst</button>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>

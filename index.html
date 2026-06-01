@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>AI Data Analyst</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 680px; margin: 30px auto; }
+    #chat { border: 1px solid #ddd; border-radius: 10px; padding: 14px; min-height: 200px; }
+    .u { color: #1d4ed8; margin: 8px 0; } .a { color: #111; margin: 8px 0; white-space: pre-wrap; }
+    input { width: 75%; padding: 10px; } button { padding: 10px 16px; }
+  </style>
+</head>
+<body>
+  <h2>AI Data Analyst</h2>
+  <div id="chat"></div>
+  <p><input id="q" placeholder="e.g. sales report by region" />
+     <button onclick="ask()">Ask</button></p>
+
+  <script>
+    const chat = document.getElementById('chat');
+    const add = (t, cls) => { const d = document.createElement('div'); d.className = cls; d.textContent = t; chat.appendChild(d); return d; };
+
+    function drawChart(item) {
+      const c = document.createElement('canvas'); chat.appendChild(c);
+      new Chart(c, {
+        type: 'bar',
+        data: {
+          labels: item.rows.map(r => r.label),
+          datasets: [{ label: 'Total (₹)', data: item.rows.map(r => r.total),
+                       backgroundColor: '#2563eb' }]
+        },
+        options: { plugins: { title: { display: true, text: 'Sales by ' + item.group_by } } }
+      });
+    }
+
+    async function ask() {
+      const q = document.getElementById('q'); const message = q.value.trim();
+      if (!message) return;
+      add('You: ' + message, 'u'); q.value = '';
+      const res = await fetch('http://127.0.0.1:8002/ask', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message })
+      });
+      const data = await res.json();
+      add('Analyst: ' + (data.answer || data.error || '...'), 'a');
+      // draw a chart if the agent returned chartable data
+      (data.data || []).forEach(step => {
+        const r = step.result;
+        if (r && r.type === 'sales_report' && r.rows?.length) drawChart(r);
+      });
+    }
+  </script>
+</body>
+</html>
